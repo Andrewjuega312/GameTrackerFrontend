@@ -1,0 +1,55 @@
+.detalle-juego {
+  background-color: var(--color-tarjeta);
+  border-radius: 8px;
+  box-shadow: var(--sombra);
+  padding: 20px;
+}
+
+.cabecera-juego {
+  display: flex;
+  margin-bottom: 30px;
+}
+
+.portada-grande {
+  width: 200px;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 20px;
+}
+
+.info-juego {
+  flex: 1;
+}
+
+.puntuacion-detalle {
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+
+.estado-detalle, .horas-detalle {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.acciones-detalle {
+  margin-top: 20px;
+}
+
+.seccion-resenas {
+  margin-top: 30px;
+}
+
+@media (max-width: 768px) {
+  .cabecera-juego {
+    flex-direction: column;
+  }
+  
+  .portada-grande {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+}
