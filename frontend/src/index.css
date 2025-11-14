@@ -1,0 +1,156 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  --color-fondo: #f8fafc;
+  --color-texto: #1e293b;
+  --color-primario: #3b82f6;
+  --color-secundario: #2563eb;
+  --color-acento: #f43f5e;
+  --color-bar-bg: #00acc1;
+  --color-bar-text: #000000;
+  --color-tarjeta: #ffffff;
+  --color-borde: #e2e8f0;
+  --color-error: #ef4444;
+  --color-exito: #22c55e;
+  --color-advertencia: #f59e0b;
+  --color-completado: #22c55e;
+  --color-pendiente: #f59e0b;
+  --color-estrella: #fbbf24;
+  --color-estrella-vacia: #e5e7eb;
+  
+  --sombra: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --sombra-hover: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --radio-borde: 0.5rem;
+  
+  --espaciado-xs: 0.25rem;
+  --espaciado-s: 0.5rem;
+  --espaciado-m: 1rem;
+  --espaciado-l: 1.5rem;
+  --espaciado-xl: 2rem;
+  
+  --transicion: 200ms ease-in-out;
+
+  color: var(--color-texto);
+  background-color: var(--color-fondo);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[data-theme="dark"] {
+  --color-fondo: #0f172a;
+  --color-texto: #f1f5f9;
+  --color-primario: #60a5fa;
+  --color-secundario: #3b82f6;
+  --color-acento: #fb7185;
+  --color-tarjeta: #1e293b;
+  --color-borde: #334155;
+  --color-error: #f87171;
+  --color-exito: #4ade80;
+  --color-advertencia: #fbbf24;
+  --color-completado: #4ade80;
+  --color-pendiente: #fbbf24;
+  --color-estrella: #fbbf24;
+  --color-estrella-vacia: #475569;
+  --color-bar-bg: #0b1220;
+  --color-bar-text: #e6eef6;
+  --sombra: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  min-width: 100%;
+  min-height: 100vh;
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  transition: background-color var(--transicion), color var(--transicion);
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: var(--radio-borde);
+  border: 1px solid var(--color-borde);
+  padding: var(--espaciado-s) var(--espaciado-m);
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--color-primario);
+  color: var(--color-tarjeta);
+  cursor: pointer;
+  transition: all var(--transicion);
+}
+button:hover {
+  border-color: var(--color-secundario);
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --espaciado-xl: 1.5rem;
+    --espaciado-l: 1rem;
+    --espaciado-m: 0.75rem;
+  }
+
+  body {
+    font-size: 14px;
+  }
+
+  .contenido {
+    padding: var(--espaciado-m);
+  }
+
+  button {
+    width: 100%;
+    margin-bottom: var(--espaciado-s);
+  }
+
+  .grid-juegos {
+    grid-template-columns: 1fr;
+    gap: var(--espaciado-m);
+  }
+}
+
+body.modo-oscuro {
+  --color-fondo: #0f1720;      
+  --color-texto: #e6eef6;      
+  --color-primario: #60a5fa;
+  --color-secundario: #3b82f6;
+  --color-acento: #fb7185;
+  --color-tarjeta: #0b1220;    
+  --color-borde: #1f2937;
+  --sombra: 0 2px 6px rgba(0,0,0,0.6);
+}
+
+body {
+  color: var(--color-texto);
+  background-color: var(--color-fondo);
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+.app {
+  min-height: 100vh;
+}
+

@@ -1,0 +1,72 @@
+.formulario-resena-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--espaciado-xl);
+  background-color: var(--color-tarjeta);
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra);
+  border: 1px solid var(--color-borde);
+}
+
+.formulario-resena {
+  display: flex;
+  flex-direction: column;
+}
+
+.campo {
+  margin-bottom: 15px;
+}
+
+.campo label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.campo input, .campo textarea, .campo select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--color-borde);
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.campo input:focus, .campo textarea:focus, .campo select:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 2px var(--color-primario-alpha);
+}
+
+.selector-estrellas {
+  display: flex;
+  gap: var(--espaciado-xs);
+}
+
+.estrella-label {
+  cursor: pointer;
+}
+
+.estrella-label input {
+  display: none;
+}
+
+.btn-enviar {
+  align-self: flex-end;
+  margin-top: 10px;
+}
+
+.panel-resenas {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-tarjeta);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde);
+  padding: var(--espaciado-m);
+}
+
+.btn-cerrar-sesion {
+  background-color: var(--color-error);
+  color: var(--color-tarjeta);
+}
