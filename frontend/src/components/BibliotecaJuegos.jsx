@@ -1,68 +1,47 @@
 // Esta vista muestra tu biblioteca de juegos y permite filtrarlos.
 // Aquí cargamos los juegos desde la API y aplicamos filtros simples.
-// Esta vista muestra TU biblioteca personal.
-// Importante: los juegos se filtran por el usuario autenticado en el backend.
-import React, { useState, useEffect, useContext } from 'react';
-import api from '../api/axios';
-import TarjetaJuego from './TarjetaJuego';
-import Filtros from './Filtros';
-import '../styles/BibliotecaJuegos.css';
-import { AuthContext } from '../context/AuthContext';
+import React, { useState, useEffect, useContext } from 'react'
+import api from '../api/axios'
+import TarjetaJuego from './TarjetaJuego'
+import Filtros from './Filtros'
+import '../styles/BibliotecaJuegos.css'
+import { AuthContext } from '../context/AuthContext'
 
 function BibliotecaJuegos() {
-  const { user } = useContext(AuthContext) // Si no hay usuario, mostramos un mensaje invitando a iniciar sesión
+  const { user } = useContext(AuthContext)
   // Estados principales: lista original, lista filtrada, y estados de carga/error.
-  const [juegos, setJuegos] = useState([]);
-  const [juegosFiltrados, setJuegosFiltrados] = useState([]);
-  const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState(null);
+  const [juegos, setJuegos] = useState([])
+  const [juegosFiltrados, setJuegosFiltrados] = useState([])
+  const [cargando, setCargando] = useState(true)
+  const [error, setError] = useState(null)
+  const [opciones, setOpciones] = useState({ plataformas: [], generos: [] })
   const [filtros, setFiltros] = useState({
     titulo: '',
     genero: '',
     plataforma: '',
     estado: '',
-    // Nota: usamos "minPuntuacion" para filtrar por una puntuación mínima
     minPuntuacion: ''
-  });
+  })
 
   useEffect(() => {
-    const obtenerJuegos = async () => {
+    const obtenerDatos = async () => {
       try {
-        setCargando(true);
-        // Esta ruta devuelve SOLO los juegos del usuario autenticado.
-        const respuesta = await api.get('/api/juegos');
-        setJuegos(respuesta.data);
-        setJuegosFiltrados(respuesta.data);
-        setCargando(false);
+        setCargando(true)
+        const [lista, opts] = await Promise.all([
+          api.get('/api/juegos'),
+          api.get('/api/juegos/opciones')
+        ])
+        setJuegos(lista.data)
+        setJuegosFiltrados(lista.data)
+        setOpciones(opts.data)
+        setCargando(false)
       } catch (error) {
-        console.error('Error al cargar juegos:', error);
-        setCargando(false);
-      }
-    };
-    // Si no hay usuario, no pedimos juegos (no tendríamos token válido)
-    if (user) obtenerJuegos();
-    else {
-      setJuegos([])
-      setJuegosFiltrados([])
-      setCargando(false)
-    }
-  }, [user]);
-
-  const [opcionesPlataformas, setOpcionesPlataformas] = useState([])
-  const [opcionesGeneros, setOpcionesGeneros] = useState([])
-  useEffect(() => {
-    const cargarOpciones = async () => {
-      try {
-        const { data } = await api.get('/api/juegos/opciones')
-        setOpcionesPlataformas(data?.plataformas || [])
-        setOpcionesGeneros(data?.generos || [])
-      } catch (e) {
-        setOpcionesPlataformas([])
-        setOpcionesGeneros([])
+        setError('Debes iniciar sesión para ver tu biblioteca personal')
+        setCargando(false)
       }
     }
-    cargarOpciones()
-  }, [])
+    if (user) obtenerDatos(); else { setCargando(false); setError('Debes iniciar sesión para ver tu biblioteca personal') }
+  }, []);
 
   // Cada vez que cambian los filtros o los juegos, recalculamos la lista filtrada.
   useEffect(() => {
@@ -103,23 +82,14 @@ function BibliotecaJuegos() {
     setJuegosFiltrados(resultado);
   }, [filtros, juegos]);
 
-  if (cargando) return <div className="cargando">Cargando juegos...</div>;
-  if (error) return <div className="error">{error}</div>;
-
-  if (!user) {
-    return (
-      <div className="biblioteca-juegos">
-        <h2>Mi Biblioteca de Juegos</h2>
-        <p className="sin-juegos">Para ver tu biblioteca personal, inicia sesión.</p>
-      </div>
-    )
-  }
+  if (cargando) return <div className="cargando">Cargando juegos...</div>
+  if (!user) return <div className="error">Debes iniciar sesión para ver tu biblioteca personal</div>
+  if (error) return <div className="error">{error}</div>
 
   return (
     <div className="biblioteca-juegos">
       <h2>Mi Biblioteca de Juegos</h2>
-      {/* Componente con los campos para filtrar la lista */}
-      <Filtros filtros={filtros} setFiltros={setFiltros} opcionesPlataformas={opcionesPlataformas} opcionesGeneros={opcionesGeneros} />
+      <Filtros filtros={filtros} setFiltros={setFiltros} opciones={opciones} />
       {juegosFiltrados.length === 0 ? (
         <p className="sin-juegos">No hay juegos que coincidan con los filtros.</p>
       ) : (
@@ -128,8 +98,7 @@ function BibliotecaJuegos() {
             <TarjetaJuego
               key={juego._id}
               juego={juego}
-              onDeleted={(id) => {
-                // Si se borra un juego, lo quitamos de ambas listas
+              onDeleted={id => {
                 setJuegos(prev => prev.filter(j => j._id !== id))
                 setJuegosFiltrados(prev => prev.filter(j => j._id !== id))
               }}

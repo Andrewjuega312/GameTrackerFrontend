@@ -1,6 +1,6 @@
 // Página para gestionar reseñas del usuario.
 // Permite agregar reseñas a juegos, editar y borrar las propias, y ver todas.
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useMemo, useState, useContext } from 'react'
 import api from '../api/axios'
 import { AuthContext } from '../context/AuthContext'
 import '../styles/FormularioResena.css'
@@ -10,29 +10,34 @@ function Resenas() {
   const { user, logout } = useContext(AuthContext)
   const [resenas, setResenas] = useState([])
   const [juegos, setJuegos] = useState([])
+  const [todosJuegos, setTodosJuegos] = useState([])
+  const [catalogo, setCatalogo] = useState([])
+  const [mapaTitulos, setMapaTitulos] = useState({})
   const [juegoId, setJuegoId] = useState('')
+  const [catalogoId, setCatalogoId] = useState('')
+  const [filtroTodasId, setFiltroTodasId] = useState('')
   const [texto, setTexto] = useState('')
   const [estrellas, setEstrellas] = useState(5)
   const [error, setError] = useState('')
   const [editandoId, setEditandoId] = useState('')
   const [textoEditado, setTextoEditado] = useState('')
   const [estrellasEditadas, setEstrellasEditadas] = useState(5)
-  const [filtroTodosJuegoId, setFiltroTodosJuegoId] = useState('')
-
-  // Muestra el nombre del juego asociado a la reseña.
-  // Si no se encuentra en la lista, mostramos un texto claro.
-  const nombreJuego = (id) => {
-    const j = juegos.find(x => x._id === id)
-    return j ? j.titulo : 'Juego no disponible'
-  }
 
   // Carga listas de reseñas y juegos para el selector.
   const cargar = async () => {
     const r = await api.get('/api/resenas')
     setResenas(r.data)
-    // Cargamos TODOS los juegos para poder reseñar cualquiera.
-    const j = await api.get('/api/juegos/todos')
+    const [j, jt, c] = await Promise.all([
+      api.get('/api/juegos'),
+      api.get('/api/juegos/todos'),
+      api.get('/api/catalogo-juegos')
+    ])
     setJuegos(j.data)
+    setTodosJuegos(jt.data)
+    setCatalogo(c.data)
+    const m = {}
+    jt.data.forEach(x => { m[x._id] = x.titulo })
+    setMapaTitulos(m)
   }
 
   useEffect(() => { cargar() }, [])
@@ -41,12 +46,24 @@ function Resenas() {
   const enviar = async e => {
     e.preventDefault()
     if (!user) return setError('Debes iniciar sesión para agregar reseñas')
-    if (!juegoId) return setError('Selecciona un juego')
+    if (!juegoId && !catalogoId) return setError('Selecciona un juego')
     try {
-      await api.post('/api/resenas', { juegoId, autor: user.nombre, texto, estrellas })
+      let juegoDestinoId = juegoId
+      if (!juegoDestinoId && catalogoId) {
+        const item = catalogo.find(x => x._id === catalogoId)
+        if (!item) throw new Error('Juego no encontrado en catálogo')
+        const ya = juegos.find(x => x.titulo.trim().toLowerCase() === item.titulo.trim().toLowerCase() && (x.plataforma||'').trim().toLowerCase() === (item.plataforma||'').trim().toLowerCase())
+        if (ya) juegoDestinoId = ya._id
+        else {
+          const creado = await api.post('/api/juegos', { titulo: item.titulo, plataforma: item.plataforma, genero: item.genero, portada: item.portada })
+          juegoDestinoId = creado.data._id
+        }
+      }
+      await api.post('/api/resenas', { juegoId: juegoDestinoId, autor: user.nombre, texto, estrellas })
       setTexto('')
       setEstrellas(5)
       setJuegoId('')
+      setCatalogoId('')
       setError('')
       await cargar()
     } catch (e) {
@@ -75,6 +92,13 @@ function Resenas() {
             </select>
           </div>
           <div className="campo">
+            <label htmlFor="catalogo">O elegir del catálogo</label>
+            <select id="catalogo" value={catalogoId} onChange={e => setCatalogoId(e.target.value)}>
+              <option value="">Selecciona del catálogo</option>
+              {catalogo.map(j => <option key={j._id} value={j._id}>{j.titulo} · {j.plataforma}</option>)}
+            </select>
+          </div>
+          <div className="campo">
             <label htmlFor="estrellas">Puntuación</label>
             <div className="selector-estrellas">
               {[1,2,3,4,5].map(v => (
@@ -95,13 +119,14 @@ function Resenas() {
       {juegoId && (
         <div className="lista-resenas">
           <h3>Reseñas del juego seleccionado</h3>
+          <div className="juego-resenas-nombre">{mapaTitulos[juegoId] || (juegos.find(j=>j._id===juegoId)?.titulo || '')}</div>
           <div className="resenas-container">
             {resenas.filter(r => r.juegoId === juegoId).map(r => (
               <div key={r._id} className="resena-item">
                 <div className="resena-header">
                   <span className="autor">{r.autor}</span>
+                  <span className="juego-nombre">{mapaTitulos[r.juegoId] || ''}</span>
                   <span className="fecha">{new Date(r.fecha).toLocaleDateString()}</span>
-                  <span className="juego-nombre">Juego: {nombreJuego(r.juegoId)}</span>
                   {user?.nombre === r.autor && (
                     <button
                       className="btn-borrar-resena"
@@ -177,20 +202,27 @@ function Resenas() {
       )}
       <div className="lista-resenas">
         <h3>Todas las reseñas</h3>
-        <div className="campo" style={{ maxWidth: 400, marginBottom: 12 }}>
-          <label>Filtrar por juego</label>
-          <select value={filtroTodosJuegoId} onChange={e=>setFiltroTodosJuegoId(e.target.value)}>
+        <div className="filtros" style={{ marginBottom: '0.75rem' }}>
+          <label style={{ marginRight: '0.5rem' }}>Filtrar por juego</label>
+          <select
+            value={filtroTodasId}
+            onChange={e => setFiltroTodasId(e.target.value)}
+          >
             <option value="">Todos</option>
-            {juegos.map(j => <option key={j._id} value={j._id}>{j.titulo}</option>)}
+            {useMemo(() => {
+              const ids = new Set(resenas.map(r => r.juegoId))
+              const lista = todosJuegos.filter(j => ids.has(j._id))
+              return lista.map(j => <option key={j._id} value={j._id}>{j.titulo}</option>)
+            }, [resenas, todosJuegos])}
           </select>
         </div>
         <div className="resenas-container">
-          {(filtroTodosJuegoId ? resenas.filter(r=>r.juegoId===filtroTodosJuegoId) : resenas).map(r => (
+          {(filtroTodasId ? resenas.filter(r => r.juegoId === filtroTodasId) : resenas).map(r => (
             <div key={r._id} className="resena-item">
               <div className="resena-header">
                 <span className="autor">{r.autor}</span>
+                <span className="juego-nombre">{mapaTitulos[r.juegoId] || ''}</span>
                 <span className="fecha">{new Date(r.fecha).toLocaleDateString()}</span>
-                <span className="juego-nombre">Juego: {nombreJuego(r.juegoId)}</span>
                 {user?.nombre === r.autor && (
                   <button
                     className="btn-borrar-resena"

@@ -1,97 +1,92 @@
-import React, { useEffect, useMemo, useState, useContext } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import api from '../api/axios'
-import Filtros from '../components/Filtros'
-import TarjetaJuegoSimple from '../components/TarjetaJuegoSimple'
-import { AuthContext } from '../context/AuthContext'
+import '../styles/BibliotecaGeneral.css'
 
-// Biblioteca General
-// Aquí mostramos todos los juegos que existen para que cualquiera los vea.
-// La idea es que puedas ver, buscar y reseñar aunque no sean tuyos.
-export default function BibliotecaGeneral() {
-  const { user } = useContext(AuthContext)
+function BibliotecaGeneral() {
   const [juegos, setJuegos] = useState([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
-  // Usamos la misma estructura de filtros que en Mi Biblioteca
+  const [opciones, setOpciones] = useState({ plataformas: [], generos: [] })
   const [filtros, setFiltros] = useState({ titulo: '', genero: '', plataforma: '' })
 
   useEffect(() => {
     const cargar = async () => {
       try {
-        setCargando(true)
-        const { data } = await api.get('/api/catalogo-juegos')
-        setJuegos(data || [])
-        setError('')
+        const [cat, opts] = await Promise.all([
+          api.get('/api/catalogo-juegos'),
+          api.get('/api/catalogo-juegos/opciones')
+        ])
+        setJuegos(cat.data)
+        setOpciones(opts.data)
+        setCargando(false)
       } catch (e) {
-        setError('No se pudieron cargar los juegos')
-      } finally {
+        setError('No se pudo cargar el catálogo')
         setCargando(false)
       }
     }
     cargar()
   }, [])
 
-  // Opciones únicas de plataforma y género, generadas desde todos los juegos
-  // Opciones de filtros desde backend (sin duplicados)
-  const [opciones, setOpciones] = useState({ plataformas: [], generos: [] })
-  useEffect(() => {
-    const cargarOpciones = async () => {
-      try {
-        const { data } = await api.get('/api/catalogo-juegos/opciones')
-        setOpciones({
-          plataformas: data?.plataformas || [],
-          generos: data?.generos || []
-        })
-      } catch (e) {
-        setOpciones({ plataformas: [], generos: [] })
-      }
-    }
-    cargarOpciones()
-  }, [])
+  function norm(s) { return String(s || '').trim().toLowerCase() }
 
   const filtrados = useMemo(() => {
-    let resultado = [...juegos]
-    if (filtros.titulo) {
-      resultado = resultado.filter(j => j.titulo?.toLowerCase().includes(filtros.titulo.toLowerCase()))
-    }
-    if (filtros.genero) {
-      resultado = resultado.filter(j => (j.genero || '').toLowerCase().includes(filtros.genero.toLowerCase()))
-    }
-    if (filtros.plataforma) {
-      resultado = resultado.filter(j => (j.plataforma || '').toLowerCase().includes(filtros.plataforma.toLowerCase()))
-    }
-    // Para evitar ver repetidos, deduplicamos por título+plataforma
+    const t = norm(filtros.titulo)
+    const g = norm(filtros.genero)
+    const p = norm(filtros.plataforma)
     const vistos = new Set()
-    const sinDuplicados = []
-    for (const j of resultado) {
-      const clave = (j.titulo || '').trim().toLowerCase() + '|' + (j.plataforma || '').trim().toLowerCase()
-      if (!vistos.has(clave)) {
-        vistos.add(clave)
-        sinDuplicados.push(j)
-      }
+    const r = []
+    for (const j of juegos) {
+      const clave = norm(j.titulo) + '|' + norm(j.plataforma)
+      if (vistos.has(clave)) continue
+      if (t && !norm(j.titulo).includes(t)) continue
+      if (g && norm(j.genero) !== g) continue
+      if (p && norm(j.plataforma) !== p) continue
+      vistos.add(clave)
+      r.push(j)
     }
-    return sinDuplicados
+    return r
   }, [juegos, filtros])
 
-  if (cargando) return <div className="cargando">Cargando...</div>
-  if (error) return <div className="error">{error}</div>
+  if (cargando) return <div className={'contenido'}><h2>Biblioteca General</h2><div>Cargando...</div></div>
+  if (error) return <div className={'contenido'}><h2>Biblioteca General</h2><div className="error">{error}</div></div>
 
   return (
-    <div className="biblioteca-juegos">
+    <div className={'contenido'}>
       <h2>Biblioteca General</h2>
-      {/* Filtros simples para buscar juegos por nombre, género, etc. */}
-      <Filtros filtros={filtros} setFiltros={setFiltros} opcionesPlataformas={opciones.plataformas} opcionesGeneros={opciones.generos} />
-      {/* Lista de tarjetas con los juegos filtrados */}
-      {filtrados.length === 0 ? (
-        <p className="sin-juegos">No hay juegos con esos filtros.</p>
-      ) : (
-        <div className="grid-juegos">
-          {filtrados.map(j => (
-            <TarjetaJuegoSimple key={j._id} juego={j} onDeleted={(id) => setJuegos(prev => prev.filter(x => x._id !== id))} />
-          ))}
-        </div>
-      )}
-      {/* Nota: En la Biblioteca General no mostramos botones de edición/borrado */}
+      <div className="filtros" style={{ marginBottom: '1rem' }}>
+        <input
+          type="text"
+          placeholder="Buscar por título"
+          value={filtros.titulo}
+          onChange={e => setFiltros(f => ({ ...f, titulo: e.target.value }))}
+        />
+        <select
+          value={filtros.genero}
+          onChange={e => setFiltros(f => ({ ...f, genero: e.target.value }))}
+        >
+          <option value="">Todos los géneros</option>
+          {opciones.generos.map(g => <option key={g} value={g}>{g}</option>)}
+        </select>
+        <select
+          value={filtros.plataforma}
+          onChange={e => setFiltros(f => ({ ...f, plataforma: e.target.value }))}
+        >
+          <option value="">Todas las plataformas</option>
+          {opciones.plataformas.map(p => <option key={p} value={p}>{p}</option>)}
+        </select>
+      </div>
+
+      <div className="resenas-container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px' }}>
+        {filtrados.map(j => (
+          <div key={j._id} className="tarjeta-juego">
+            {j.portada && <img src={j.portada} alt={j.titulo} className="portada" />}
+            <h3>{j.titulo}</h3>
+            <div className="horas">{j.plataforma}</div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
+
+export default BibliotecaGeneral

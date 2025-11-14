@@ -5,6 +5,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Header from './components/Header'
 import Inicio from './pages/Inicio'
 import BibliotecaGeneral from './pages/BibliotecaGeneral'
+import BibliotecaPersonal from './pages/BibliotecaPersonal'
+import Perfil from './pages/Perfil'
 import AgregarJuego from './pages/AgregarJuego'
 import EditarJuego from './pages/EditarJuego'
 import DetalleJuego from './pages/DetalleJuego'
@@ -22,10 +24,9 @@ function App() {
         <Header />
         <main className="contenido">
           <Routes>
-            {/* Página principal: Biblioteca General (todos los juegos) */}
             <Route path="/" element={<BibliotecaGeneral />} />
-            {/* Mi Biblioteca Personal (tus juegos) */}
-            <Route path="/mi-biblioteca" element={<Inicio />} />
+            <Route path="/biblioteca-general" element={<BibliotecaGeneral />} />
+            <Route path="/biblioteca-personal" element={<BibliotecaPersonal />} />
             <Route path="/agregar" element={<AgregarJuego />} />
             <Route path="/editar/:id" element={<EditarJuego />} />
             {/* Vista detallada de un juego seleccionado */}
@@ -34,6 +35,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/registro" element={<Registro />} />
             <Route path="/resenas" element={<Resenas />} />
+            <Route path="/perfil" element={<Perfil />} />
           </Routes>
         </main>
         <footer className="footer">

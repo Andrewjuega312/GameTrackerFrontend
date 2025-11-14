@@ -1,11 +1,11 @@
 // Página de inicio que muestra la biblioteca de juegos con filtros.
 import React from 'react';
-import BibliotecaJuegos from '../components/BibliotecaJuegos';
+import BibliotecaPersonal from './BibliotecaPersonal';
 
 function Inicio() {
   return (
     <div className="pagina-inicio">
-      <BibliotecaJuegos />
+      <BibliotecaPersonal />
     </div>
   );
 }

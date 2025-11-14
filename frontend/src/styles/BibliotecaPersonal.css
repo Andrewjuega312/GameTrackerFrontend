@@ -1,0 +1,82 @@
+.biblioteca-personal {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.tema-light {
+  background: #ffffff;
+  color: #111111;
+}
+
+.tema-dark {
+  background: #121212;
+  color: #f0f0f0;
+}
+
+.formulario {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr auto;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.formulario input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: inherit;
+  color: inherit;
+}
+
+.formulario button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  background: #4a90e2;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.tarjeta {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.tema-light .tarjeta {
+  background: #f9f9f9;
+}
+
+.portada {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.meta {
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+.btn-eliminar {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 6px;
+  background: #e74c3c;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.vacio {
+  padding: 12px;
+}

@@ -9,9 +9,6 @@ import { AuthContext } from '../context/AuthContext';
 function TarjetaJuego({ juego, onDeleted }) {
   const { user } = useContext(AuthContext)
   const [fav, setFav] = useState(false)
-  // Si el juego es del usuario, puede editar y borrar.
-  const propio = user?.
-    _id && juego?.usuario ? String(user._id) === String(juego.usuario) : false
 
   // Marca o desmarca este juego como favorito del usuario.
   const toggleFav = async () => {
@@ -21,7 +18,7 @@ function TarjetaJuego({ juego, onDeleted }) {
       setFav(ids.includes(juego._id))
     } catch (e) {}
   }
-  const { _id, titulo, portada, puntuacion, completado, horasJugadas } = juego;
+  const { _id, titulo, portada, puntuacion, completado, horasJugadas, plataforma } = juego;
 
   // Dibuja estrellas según la puntuación del juego (de 0 a 5).
   const renderEstrellas = (puntuacion) => {
@@ -41,6 +38,7 @@ function TarjetaJuego({ juego, onDeleted }) {
     <div className="tarjeta-juego">
       <img src={portada} alt={titulo} className="portada" />
       <h3>{titulo}</h3>
+      <div className="horas">{plataforma}</div>
   <div className="puntuacion">{renderEstrellas(puntuacion)} <span className="puntuacion-num">{Number(puntuacion).toFixed(1)}</span></div>
       <div className="estado">
         <span className={completado ? 'completado' : 'pendiente'}>
@@ -50,9 +48,9 @@ function TarjetaJuego({ juego, onDeleted }) {
       <div className="horas">Horas jugadas: {horasJugadas}</div>
       <div className="acciones">
         <Link to={`/juego/${_id}`} className="btn-ver">Ver detalles</Link>
-        {propio && <Link to={`/editar/${_id}`} className="btn-editar">Editar</Link>}
-        <button className="btn-ver" onClick={toggleFav}>{fav ? 'Quitar favorito' : 'Favorito'}</button>
-        {propio && (
+        {user && <Link to={`/editar/${_id}`} className="btn-editar">Editar</Link>}
+        {user && <button className="btn-ver" onClick={toggleFav}>{fav ? 'Quitar favorito' : 'Favorito'}</button>}
+        {user && (
           <button
             className="btn-borrar"
             onClick={async () => {

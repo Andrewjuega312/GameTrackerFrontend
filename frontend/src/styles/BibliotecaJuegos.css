@@ -1,7 +1,6 @@
 .biblioteca-juegos {
   width: 100%;
-  /* Agregamos padding horizontal para separar del borde */
-  padding: var(--espaciado-xl) var(--espaciado-l);
+  padding: var(--espaciado-xl) 0;
 }
 
 .biblioteca-juegos h2 {

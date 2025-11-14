@@ -1,0 +1,68 @@
+# GameTracker
+
+Aplicación para gestionar y hacer seguimiento de tu biblioteca de videojuegos.
+
+## Características
+
+- Biblioteca de juegos con visualización en tarjetas
+- Añadir, editar y eliminar juegos
+- Sistema de reseñas con puntuación por estrellas
+- Estadísticas personales de tu colección
+- Diseño responsive
+
+## Requisitos
+
+- Node.js (v14 o superior)
+- MongoDB
+
+## Instalación
+
+### Backend
+
+1. Navega a la carpeta del backend:
+```
+cd backend
+```
+
+2. Instala las dependencias:
+```
+npm install
+```
+
+3. Inicia el servidor:
+```
+npm start
+```
+
+El servidor backend se ejecutará en `http://localhost:5000`.
+
+### Frontend
+
+1. En otra terminal, navega a la carpeta raíz del proyecto:
+```
+cd ..
+```
+
+2. Instala las dependencias:
+```
+npm install
+```
+
+3. Inicia el servidor de desarrollo:
+```
+npm run dev
+```
+
+La aplicación frontend se ejecutará en `http://localhost:5173`.
+
+## Uso
+
+1. Abre tu navegador y ve a `http://localhost:5173`
+2. Explora tu biblioteca de juegos
+3. Añade nuevos juegos desde la sección "Agregar Juego"
+4. Consulta tus estadísticas en la sección "Estadísticas"
+
+## Tecnologías utilizadas
+
+- Frontend: React, React Router, Axios
+- Backend: Node.js, Express, MongoDB, Mongoose

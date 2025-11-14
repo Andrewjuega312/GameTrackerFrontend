@@ -1,15 +1,13 @@
 // Página de detalle de juego: muestra info, reseñas y permite puntuar.
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../api/axios';
 import ListaResenas from '../components/ListaResenas';
 import FormularioResena from '../components/FormularioResena';
 import '../styles/DetalleJuego.css';
-import { AuthContext } from '../context/AuthContext';
 
 function DetalleJuego() {
   const { id } = useParams();
-  const { user } = useContext(AuthContext)
   const [juego, setJuego] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
@@ -18,8 +16,7 @@ function DetalleJuego() {
   useEffect(() => {
     const obtenerJuego = async () => {
       try {
-        // Usamos el endpoint público para ver cualquier juego
-        const respuesta = await api.get(`/api/juegos/public/${id}`);
+        const respuesta = await api.get(`/api/juegos/${id}`);
         setJuego(respuesta.data);
         setCargando(false);
       } catch (err) {
@@ -35,7 +32,7 @@ function DetalleJuego() {
   const handleResenaNueva = () => {
     const obtenerJuegoActualizado = async () => {
       try {
-        const respuesta = await api.get(`/api/juegos/public/${id}`);
+        const respuesta = await api.get(`/api/juegos/${id}`);
         setJuego(respuesta.data);
       } catch (err) {
         console.error('Error al actualizar juego:', err);
@@ -77,32 +74,25 @@ function DetalleJuego() {
         <div className="info-juego">
           <h2>{juego.titulo}</h2>
           <div className="puntuacion-detalle">{renderEstrellas(juego.puntuacion)}</div>
-          {/* Solo el dueño puede ajustar su puntuación rápida */}
-          {user?._id && juego?.usuario && String(user._id) === String(juego.usuario) && (
-            <div className="acciones-detalle">
-              {[1,2,3,4,5].map(v => (
-                <button key={v} className="btn-ver" onClick={() => setPuntuacion(v)}>+{v}</button>
-              ))}
-            </div>
-          )}
+          <div className="acciones-detalle">
+            {[1,2,3,4,5].map(v => (
+              <button key={v} className="btn-ver" onClick={() => setPuntuacion(v)}>+{v}</button>
+            ))}
+          </div>
           <p className="estado-detalle">
             Estado: <span className={juego.completado ? 'completado' : 'pendiente'}>
               {juego.completado ? 'Completado' : 'Pendiente'}
             </span>
           </p>
           <p className="horas-detalle">Horas jugadas: {juego.horasJugadas}</p>
-          {/* Solo el dueño puede editar su propio juego */}
-          {user?._id && juego?.usuario && String(user._id) === String(juego.usuario) && (
-            <div className="acciones-detalle">
-              <Link to={`/editar/${juego._id}`} className="btn-editar">Editar</Link>
-            </div>
-          )}
+          <div className="acciones-detalle">
+            <Link to={`/editar/${juego._id}`} className="btn-editar">Editar</Link>
+          </div>
         </div>
       </div>
 
       <div className="seccion-resenas">
-        {/* Pasamos el título del juego para mostrarlo junto a cada reseña */}
-        <ListaResenas juegoId={id} juegoTitulo={juego.titulo} />
+        <ListaResenas juegoId={id} />
         <FormularioResena juegoId={id} onResenaNueva={handleResenaNueva} />
       </div>
     </div>

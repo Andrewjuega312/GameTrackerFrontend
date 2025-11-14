@@ -9,8 +9,6 @@ function PanelUsuario({ onClose }) {
   const { user, logout } = useContext(AuthContext)
   const [favoritos, setFavoritos] = useState([])
   const [misResenas, setMisResenas] = useState([])
-  // Guardamos aquí los nombres de juegos por su id para mostrarlos fácil.
-  const [juegosPorId, setJuegosPorId] = useState({})
 
   // Carga favoritos del usuario y filtra sus reseñas.
   const cargar = async () => {
@@ -19,16 +17,6 @@ function PanelUsuario({ onClose }) {
     const r = await api.get('/api/resenas')
     const mias = r.data.filter(x => x.autor === user?.nombre)
     setMisResenas(mias)
-    // Traemos tus juegos y creamos un mapa id -> título.
-    try {
-      const j = await api.get('/api/juegos')
-      const mapa = {}
-      j.data.forEach(g => { mapa[g._id] = g.titulo })
-      setJuegosPorId(mapa)
-    } catch (e) {
-      // Si no podemos traer juegos, dejamos el mapa vacío.
-      setJuegosPorId({})
-    }
   }
 
   useEffect(() => { if (user) cargar() }, [user])
@@ -66,9 +54,6 @@ function PanelUsuario({ onClose }) {
           <ul>
             {misResenas.map(r => (
               <li key={r._id}>
-                {/* Mostramos el nombre del juego al que pertenece esta reseña */}
-                <strong>Juego:</strong> {juegosPorId[r.juegoId] || 'Juego no disponible'}
-                <br />
                 {r.texto}
                 <button className="btn-cerrar-sesion" onClick={() => borrarResena(r._id)}>
                   Borrar

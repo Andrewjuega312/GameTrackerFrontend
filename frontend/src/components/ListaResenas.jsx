@@ -1,36 +1,37 @@
 // Lista y gestión de reseñas para un juego específico.
 // Permite al autor borrar o editar su propia reseña.
-import React, { useState, useEffect, useContext } from 'react';
-import api from '../api/axios';
-import '../styles/ListaResenas.css';
-import { AuthContext } from '../context/AuthContext';
+import React, { useState, useEffect, useContext } from 'react'
+import api from '../api/axios'
+import '../styles/ListaResenas.css'
+import { AuthContext } from '../context/AuthContext'
 
-// Recibimos el id del juego y opcionalmente su título para mostrarlo claro.
-function ListaResenas({ juegoId, juegoTitulo }) {
-  const [resenas, setResenas] = useState([]);
-  const [cargando, setCargando] = useState(true);
+function ListaResenas({ juegoId }) {
+  const [resenas, setResenas] = useState([])
+  const [cargando, setCargando] = useState(true)
   const { user } = useContext(AuthContext)
   const [editandoId, setEditandoId] = useState('')
   const [textoEditado, setTextoEditado] = useState('')
   const [estrellasEditadas, setEstrellasEditadas] = useState(5)
+  const [tituloJuego, setTituloJuego] = useState('')
 
   // Al montar o cambiar juegoId, traemos las reseñas del backend.
   useEffect(() => {
-    const obtenerResenas = async () => {
+    const obtenerDatos = async () => {
       try {
-        const respuesta = await api.get(`/api/resenas/juego/${juegoId}`);
-        setResenas(respuesta.data);
-        setCargando(false);
+        const [r, j] = await Promise.all([
+          api.get(`/api/resenas/juego/${juegoId}`),
+          api.get(`/api/juegos/public/${juegoId}`)
+        ])
+        setResenas(r.data)
+        setTituloJuego(j.data?.titulo || '')
+        setCargando(false)
       } catch (error) {
-        console.error('Error al cargar reseñas:', error);
-        setCargando(false);
+        setCargando(false)
       }
-    };
-
-    if (juegoId) {
-      obtenerResenas();
     }
-  }, [juegoId]);
+
+    if (juegoId) obtenerDatos()
+  }, [juegoId])
 
   // Renderiza estrellas visuales basado en la puntuación (1-5).
   const renderEstrellas = (puntuacion) => {
@@ -50,6 +51,7 @@ function ListaResenas({ juegoId, juegoTitulo }) {
   return (
     <div className="lista-resenas">
       <h3>Reseñas</h3>
+      {tituloJuego ? <div className="juego-resenas-nombre">{tituloJuego}</div> : null}
       {resenas.length === 0 ? (
         <p className="sin-resenas">No hay reseñas para este juego.</p>
       ) : (
@@ -59,8 +61,6 @@ function ListaResenas({ juegoId, juegoTitulo }) {
               <div className="resena-header">
                 <span className="autor">{resena.autor}</span>
                 <span className="fecha">{new Date(resena.fecha).toLocaleDateString()}</span>
-                {/* Mostramos el nombre del juego para que se entienda a qué reseña pertenece */}
-                {juegoTitulo && <span className="juego-nombre">Juego: {juegoTitulo}</span>}
                 {user?.nombre === resena.autor && (
                   <button
                     className="btn-borrar-resena"

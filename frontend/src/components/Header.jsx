@@ -17,10 +17,11 @@ function Header() {
       </div>
       <nav>
         <ul>
-          <li><Link to="/">Biblioteca General</Link></li>
-          <li><Link to="/mi-biblioteca">Mi Biblioteca</Link></li>
+          <li><Link to="/biblioteca-general">Biblioteca General</Link></li>
+          <li><Link to="/biblioteca-personal">Biblioteca Personal</Link></li>
           <li><Link to="/agregar">Agregar Juego</Link></li>
           <li><Link to="/estadisticas">Estadísticas</Link></li>
+          {user && <li><Link to="/perfil">Perfil</Link></li>}
           {/* Si estás logueado, ves el link a Reseñas y tu nombre */}
           {user && <li><Link to="/resenas">Reseñas</Link></li>}
           {/* Si NO estás logueado, aparecen Login y Registro */}

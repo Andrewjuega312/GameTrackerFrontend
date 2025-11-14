@@ -1,10 +1,10 @@
 .estadisticas-container {
   padding: 20px;
-  background-color: var(--color-fondo-tarjeta);
   border-radius: 8px;
   box-shadow: var(--sombra);
-  max-width: 1000px;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .estadisticas-container h2 {
@@ -13,10 +13,14 @@
 }
 
 .tarjetas-estadisticas {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  display: flex;
+  flex-direction: row;
   gap: 20px;
-  justify-items: center;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 8px;
 }
 
 .tarjeta-estadistica {
@@ -56,12 +60,6 @@
 
 @media (max-width: 768px) {
   .tarjetas-estadisticas {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  .tarjetas-estadisticas {
-    grid-template-columns: 1fr;
+    justify-content: flex-start;
   }
 }
