@@ -20,6 +20,18 @@
   background: inherit;
   color: inherit;
 }
+.filtros select option {
+  background-color: inherit;
+  color: inherit;
+}
+
+/* Fallback para modo oscuro basado en preferencia del sistema */
+@media (prefers-color-scheme: dark) {
+  .filtros select option {
+    background-color: #1e1e1e;
+    color: #f5f5f5;
+  }
+}
 .tarjeta-juego {
   border: 1px solid #ddd;
   border-radius: 10px;

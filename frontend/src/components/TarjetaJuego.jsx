@@ -1,12 +1,12 @@
-// Tarjeta individual para cada juego en la cuadrícula.
-// Muestra portada, título, estrellas y botones de acción.
+// Tarjeta de juego
+// Muestra portada, título, plataforma, estrellas y botones de acción.
 import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/TarjetaJuego.css';
 import api from '../api/axios';
 import { AuthContext } from '../context/AuthContext';
 
-function TarjetaJuego({ juego, onDeleted }) {
+function TarjetaJuego({ juego, onDeleted, hideDetails = false }) {
   const { user } = useContext(AuthContext)
   const [fav, setFav] = useState(false)
 
@@ -20,7 +20,7 @@ function TarjetaJuego({ juego, onDeleted }) {
   }
   const { _id, titulo, portada, puntuacion, completado, horasJugadas, plataforma } = juego;
 
-  // Dibuja estrellas según la puntuación del juego (de 0 a 5).
+  // Dibuja 5 estrellas según la puntuación del juego (0 a 5).
   const renderEstrellas = (puntuacion) => {
     const estrellas = [];
     const redondeo = Math.round(Number(puntuacion));
@@ -47,7 +47,7 @@ function TarjetaJuego({ juego, onDeleted }) {
       </div>
       <div className="horas">Horas jugadas: {horasJugadas}</div>
       <div className="acciones">
-        <Link to={`/juego/${_id}`} className="btn-ver">Ver detalles</Link>
+        {!hideDetails && <Link to={`/juego/${_id}`} className="btn-ver">Ver detalles</Link>}
         {user && <Link to={`/editar/${_id}`} className="btn-editar">Editar</Link>}
         {user && <button className="btn-ver" onClick={toggleFav}>{fav ? 'Quitar favorito' : 'Favorito'}</button>}
         {user && (

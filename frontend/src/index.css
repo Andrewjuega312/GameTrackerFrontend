@@ -131,7 +131,6 @@ button:focus-visible {
 }
 
 body.modo-oscuro {
-  --color-fondo: #0f1720;      
   --color-texto: #e6eef6;      
   --color-primario: #60a5fa;
   --color-secundario: #3b82f6;

@@ -27,6 +27,20 @@
   color: var(--color-texto);
 }
 
+/* Asegura que las opciones del select se vean en ambos temas */
+.filtros select option {
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+}
+
+/* Fallback para navegadores que ignoran variables en opciones */
+@media (prefers-color-scheme: dark) {
+  .filtros select option {
+    background-color: #1e1e1e;
+    color: #f5f5f5;
+  }
+}
+
 .filtros-puntuacion {
   display: flex;
   gap: 8px;

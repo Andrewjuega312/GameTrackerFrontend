@@ -1,0 +1,14 @@
+.perfil-contenido {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.perfil-contenido h3,
+.perfil-contenido p {
+  text-align: center;
+}
+
+.perfil-contenido .grid-juegos {
+  width: 100%;
+}

@@ -1,4 +1,8 @@
-// El encabezado superior de la app: muestra el logo, navegación y acciones.
+// Encabezado superior de la app: muestra el logo, navegación y acciones.
+// Explicación:
+// - Muestra enlaces de navegación.
+// - Si hay usuario (user), aparecen opciones extra como Perfil y Reseñas.
+// - Incluye un botón para alternar tema claro/oscuro.
 import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import BotonTema from './BotonTema';
@@ -8,7 +12,7 @@ import PanelUsuario from './PanelUsuario';
 
 function Header() {
   const { user } = useContext(AuthContext) // Si hay usuario, mostramos opciones adicionales
-  const [panelAbierto, setPanelAbierto] = useState(false) // Controla si el panel de usuario está abierto
+  const [panelAbierto, setPanelAbierto] = useState(false) // Abre/cierra el panel flotante con info del usuario
   return (
     <header className="header">
       <div className="logo-container">
@@ -27,14 +31,18 @@ function Header() {
           {/* Si NO estás logueado, aparecen Login y Registro */}
           {!user && <li><Link to="/login">Login</Link></li>}
           {!user && <li><Link to="/registro">Registro</Link></li>}
-          {user && <li><button className="btn-ver" onClick={() => setPanelAbierto(v => !v)}>{user.nombre}</button></li>}
+          {user && (
+            <li>
+              <button className="btn-ver" onClick={() => setPanelAbierto(v => !v)}>{user.nombre}</button>
+            </li>
+          )}
         </ul>
       </nav>
       <div className="header-actions">
-        {/* Botón para cambiar entre modo claro y oscuro */}
+        {/* Botón para alternar tema claro/oscuro */}
         <BotonTema />
       </div>
-      {/* Panel flotante con tus favoritos y reseñas */}
+      {/* Panel flotante con favoritos y reseñas del usuario */}
       {panelAbierto && user && <PanelUsuario onClose={() => setPanelAbierto(false)} />}
     </header>
   );

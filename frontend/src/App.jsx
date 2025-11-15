@@ -1,5 +1,8 @@
 // Este archivo arma el esqueleto de toda la aplicación.
-// Aquí definimos las rutas (las "pantallas") y el diseño principal.
+// Explicación sencilla:
+// - Usamos React Router para movernos entre pantallas.
+// - El <Header /> aparece en todas las páginas.
+// - En <Routes> definimos cada ruta y el componente que se muestra.
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Header from './components/Header'
@@ -17,19 +20,22 @@ import Resenas from './pages/Resenas'
 import './App.css'
 
 function App() {
+  // Componente principal: envuelve todo en <Router> para habilitar navegación.
   return (
     <Router>
       <div className="app">
-        {/* El encabezado que se muestra en todas las páginas */}
+        {/* Encabezado fijo arriba en todas las páginas */}
         <Header />
         <main className="contenido">
           <Routes>
+            {/* Rutas públicas: cualquiera puede verlas */}
             <Route path="/" element={<BibliotecaGeneral />} />
             <Route path="/biblioteca-general" element={<BibliotecaGeneral />} />
+            {/* Rutas que pueden requerir autenticación internamente */}
             <Route path="/biblioteca-personal" element={<BibliotecaPersonal />} />
             <Route path="/agregar" element={<AgregarJuego />} />
             <Route path="/editar/:id" element={<EditarJuego />} />
-            {/* Vista detallada de un juego seleccionado */}
+            {/* Vista detallada de un juego: usa :id para cargar datos específicos */}
             <Route path="/juego/:id" element={<DetalleJuego />} />
             <Route path="/estadisticas" element={<Estadisticas />} />
             <Route path="/login" element={<Login />} />

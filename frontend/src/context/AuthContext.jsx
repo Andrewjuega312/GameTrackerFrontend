@@ -1,25 +1,28 @@
-// Este contexto gestiona todo lo relacionado con autenticación (login, registro y logout).
-// Piensa en esto como la "caja" donde guardamos el usuario y su token.
+// Contexto de Autenticación
+// Explicación sencilla:
+// - Guarda el usuario y el token de acceso.
+// - Expone funciones para login, registro y logout.
+// - Configura axios para enviar el token en cada petición.
 import React, { createContext, useState, useEffect } from 'react'
 import api from '../api/axios'
 
 export const AuthContext = createContext()
 
 export function AuthProvider({ children }) {
-  // Guardamos el token y el usuario. Si ya estaban en localStorage, los usamos.
+  // Estado inicial: intentamos recuperar token/usuario de localStorage.
   const [token, setToken] = useState(() => localStorage.getItem('token') || '')
   const [user, setUser] = useState(() => {
     const u = localStorage.getItem('user')
     return u ? JSON.parse(u) : null
   })
 
-  // Si el token cambia, lo añadimos (o quitamos) de las cabeceras por defecto.
+  // Cuando cambia el token, lo añadimos o quitamos de las cabeceras por defecto.
   useEffect(() => {
     if (token) api.defaults.headers.common['Authorization'] = `Bearer ${token}`
     else delete api.defaults.headers.common['Authorization']
   }, [token])
 
-  // Iniciar sesión: pedimos a la API, guardamos token y usuario.
+  // Iniciar sesión: pedimos a la API y guardamos token y usuario.
   const login = async (email, password) => {
     const r = await api.post('/api/auth/login', { email, password })
     setToken(r.data.token)
@@ -28,7 +31,7 @@ export function AuthProvider({ children }) {
     localStorage.setItem('user', JSON.stringify(r.data.usuario))
   }
 
-  // Registrarse: muy parecido al login, pero creando el usuario primero.
+  // Registrarse: similar al login, pero crea el usuario primero.
   const register = async (nombre, email, password) => {
     const r = await api.post('/api/auth/register', { nombre, email, password })
     setToken(r.data.token)
@@ -37,7 +40,7 @@ export function AuthProvider({ children }) {
     localStorage.setItem('user', JSON.stringify(r.data.usuario))
   }
 
-  // Cerrar sesión: limpiamos token y usuario.
+  // Cerrar sesión: limpiamos token y usuario del estado y localStorage.
   const logout = () => {
     setToken('')
     setUser(null)
@@ -46,7 +49,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    // Exponemos a toda la app estas funciones y datos.
+    // Proveedor: comparte token, usuario y funciones de auth con toda la app.
     <AuthContext.Provider value={{ token, user, login, register, logout }}>
       {children}
     </AuthContext.Provider>

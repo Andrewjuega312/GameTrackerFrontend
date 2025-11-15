@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '../context/AuthContext'
 import api from '../api/axios'
 import TarjetaJuego from '../components/TarjetaJuego'
+import '../styles/Perfil.css'
 
 function Perfil() {
   const { user } = useContext(AuthContext)
@@ -20,7 +21,7 @@ function Perfil() {
         setCargando(false)
       }
     }
-    if (user) cargar(); else setCargando(false)
+    if (user) { cargar(); } else setCargando(false)
   }, [user])
 
   if (!user) return <div className="error">Debes iniciar sesión para ver Mis Favoritos</div>
@@ -29,16 +30,19 @@ function Perfil() {
 
   return (
     <div className="contenido">
-      <h2>Mis Favoritos</h2>
-      {favoritos.length === 0 ? (
-        <p>No tienes favoritos</p>
-      ) : (
-        <div className="grid-juegos">
-          {favoritos.map(j => (
-            <TarjetaJuego key={j._id} juego={j} />
-          ))}
-        </div>
-      )}
+      <h2>Perfil</h2>
+      <div className="perfil-contenido">
+        <h3>Mis Favoritos</h3>
+        {favoritos.length === 0 ? (
+          <p>No tienes favoritos</p>
+        ) : (
+          <div className="grid-juegos">
+            {favoritos.map(j => (
+              <TarjetaJuego key={j._id} juego={j} hideDetails={true} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

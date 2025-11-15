@@ -1,8 +1,10 @@
-// Controles para filtrar la lista de juegos por título, género, plataforma, estado y puntuación.
+// Filtros de búsqueda
+// Permiten filtrar por título, género, plataforma, estado y puntuación mínima.
 import React from 'react'
 import '../styles/Filtros.css'
 
 function Filtros({ filtros, setFiltros, opciones }) {
+  // Actualiza el estado de filtros según el campo cambiado.
   const handleChange = e => {
     const { name, value } = e.target
     setFiltros(prev => ({ ...prev, [name]: value }))
@@ -53,6 +55,7 @@ function Filtros({ filtros, setFiltros, opciones }) {
           <option value="pendiente">Pendientes</option>
         </select>
         <div className="filtros-puntuacion">
+          {/* Botones rápidos para fijar la puntuación mínima */}
           <button type="button" onClick={() => setFiltros(f => ({ ...f, minPuntuacion: '1' }))}>+1</button>
           <button type="button" onClick={() => setFiltros(f => ({ ...f, minPuntuacion: '2' }))}>+2</button>
           <button type="button" onClick={() => setFiltros(f => ({ ...f, minPuntuacion: '3' }))}>+3</button>

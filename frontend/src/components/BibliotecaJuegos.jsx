@@ -1,5 +1,8 @@
-// Esta vista muestra tu biblioteca de juegos y permite filtrarlos.
-// Aquí cargamos los juegos desde la API y aplicamos filtros simples.
+// Biblioteca Personal
+// Explicación:
+// - Carga tus juegos desde la API (requiere sesión).
+// - Aplica filtros en memoria (por título, género, plataforma, estado y puntuación).
+// - Muestra tarjetas y permite borrar juegos propios.
 import React, { useState, useEffect, useContext } from 'react'
 import api from '../api/axios'
 import TarjetaJuego from './TarjetaJuego'
@@ -24,6 +27,7 @@ function BibliotecaJuegos() {
   })
 
   useEffect(() => {
+    // Carga inicial: lista de juegos del usuario y opciones únicas.
     const obtenerDatos = async () => {
       try {
         setCargando(true)
@@ -43,7 +47,7 @@ function BibliotecaJuegos() {
     if (user) obtenerDatos(); else { setCargando(false); setError('Debes iniciar sesión para ver tu biblioteca personal') }
   }, []);
 
-  // Cada vez que cambian los filtros o los juegos, recalculamos la lista filtrada.
+  // Cada vez que cambian filtros o juegos, recalculamos la lista filtrada.
   useEffect(() => {
     let resultado = [...juegos];
     
@@ -98,6 +102,7 @@ function BibliotecaJuegos() {
             <TarjetaJuego
               key={juego._id}
               juego={juego}
+              hideDetails={true}
               onDeleted={id => {
                 setJuegos(prev => prev.filter(j => j._id !== id))
                 setJuegosFiltrados(prev => prev.filter(j => j._id !== id))
